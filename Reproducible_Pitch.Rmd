@@ -1,0 +1,60 @@
+---
+title: "Shiny Application Reproducible Pitch Presentation"
+author: "Sophie Yang"
+date: "4/19/2017"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Overview
+
+This Shiny Application was built as part of the **Developing Data Product** Course Project. 
+
+The GitHub repository containing related codes is located at https://github.com/SY428/ShinyApp.
+
+The Shiny Application can be accessed at: https://sy428.shinyapps.io/ShinyApp.
+
+## European Stock Market Data 
+
+This Shiny Application is designed to help the user interactively view the 4 indexes of the European Stock Market and how they changed over time. An interactive plot for the dataset **EuStockMarkets** allows the user to select up to 4 different stocks between the time frame of 1991 to 1999:
+
+1. DAX - Deutscher Aktienindex, German Stock Index
+2. SMI - Swiss Market Index
+3. CAC - Cotation Assistée en Continu 40 Index
+4. FTSE - Financial Times Stock Exchange 100 Index
+
+A slider bar accesses the time frame (in years) for the user to access the range of stock price data of any of the 4 stocks between any number of years from 1991 to 1999.
+
+## EuStockMarkets Dataset
+
+```{r results='hide', message=FALSE, warning=FALSE, echo=FALSE}
+library(shiny)
+library(plotly)
+library(tidyr)
+library(dplyr)
+```
+```{r}
+data("EuStockMarkets");
+head(EuStockMarkets,5)
+```
+
+Data reorganized vs Time
+
+```{r}
+stocks <- as.data.frame(EuStockMarkets) %>%
+          gather(index, price) %>%
+          mutate(time = rep(time(EuStockMarkets),4))
+head(stocks)
+```
+
+## Interactive Plot of All 4 Indexes
+
+```{r message=FALSE, warning=FALSE}
+plot_ly(stocks, x = stocks$time, y = stocks$price, color = stocks$index) %>%
+        layout(title = "European Stock Market Prices", 
+               yaxis = list(title = "Stock Price"), 
+               xaxis = list(title = "Year"))
+```
